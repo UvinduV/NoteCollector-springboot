@@ -1,4 +1,4 @@
-package lk.ijse.NoteCollector.V2.service;
+package lk.ijse.NoteCollector.V2.service.Impl;
 
 import jakarta.transaction.Transactional;
 import lk.ijse.NoteCollector.V2.customStatusCode.SelectedUserAndNoteErrorStatus;
@@ -8,6 +8,7 @@ import lk.ijse.NoteCollector.V2.dto.NoteStatus;
 import lk.ijse.NoteCollector.V2.entity.Impl.NoteEntity;
 import lk.ijse.NoteCollector.V2.exeption.DataPersistExeption;
 import lk.ijse.NoteCollector.V2.exeption.NoteNotFoundExeption;
+import lk.ijse.NoteCollector.V2.service.NoteService;
 import lk.ijse.NoteCollector.V2.util.AppUtil;
 import lk.ijse.NoteCollector.V2.util.Mapping;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class NoteServiceImpl implements NoteService{
+public class NoteServiceImpl implements NoteService {
     @Autowired
     private NoteDao noteDao;
     @Autowired

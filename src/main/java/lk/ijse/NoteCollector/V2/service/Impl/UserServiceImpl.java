@@ -1,4 +1,4 @@
-package lk.ijse.NoteCollector.V2.service;
+package lk.ijse.NoteCollector.V2.service.Impl;
 
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
@@ -9,9 +9,11 @@ import lk.ijse.NoteCollector.V2.dto.UserStatus;
 import lk.ijse.NoteCollector.V2.entity.Impl.UserEntity;
 import lk.ijse.NoteCollector.V2.exeption.DataPersistExeption;
 import lk.ijse.NoteCollector.V2.exeption.UserNotFoundExeption;
+import lk.ijse.NoteCollector.V2.service.UserService;
 import lk.ijse.NoteCollector.V2.util.Mapping;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
     @Autowired
@@ -74,6 +76,14 @@ public class UserServiceImpl implements UserService{
             tempUser.get().setProfilePic(userDTO.getProfilePic());
         }
     }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return userName ->
+                userDao.findByEmail(userName)
+                        .orElseThrow(()-> new UserNotFoundExeption("User Not Found"));
+    }
+
 
 
 
