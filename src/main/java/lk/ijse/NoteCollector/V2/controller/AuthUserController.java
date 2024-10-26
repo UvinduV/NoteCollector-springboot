@@ -1,9 +1,11 @@
 package lk.ijse.NoteCollector.V2.controller;
 
 import lk.ijse.NoteCollector.V2.dto.Impl.UserDTO;
+import lk.ijse.NoteCollector.V2.entity.Role;
 import lk.ijse.NoteCollector.V2.exeption.DataPersistExeption;
 import lk.ijse.NoteCollector.V2.secure.JWTAuthResponse;
 import lk.ijse.NoteCollector.V2.secure.SignIn;
+import lk.ijse.NoteCollector.V2.service.AuthService;
 import lk.ijse.NoteCollector.V2.service.UserService;
 import lk.ijse.NoteCollector.V2.util.AppUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 public class AuthUserController {
+    private final AuthService authService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
@@ -30,6 +33,7 @@ public class AuthUserController {
             @RequestPart("lastName") String lastName,
             @RequestPart("email") String email,
             @RequestPart("password") String password,
+            @RequestPart("role")String role,
             @RequestPart("profilePic") MultipartFile profilePic
     ){
 
@@ -48,10 +52,13 @@ public class AuthUserController {
             buildUserDTO.setLastName(lastName);
             buildUserDTO.setEmail(email);
             buildUserDTO.setPassword(passwordEncoder.encode(password));
+            buildUserDTO.setRole(Role.valueOf(role));
             buildUserDTO.setProfilePic(picToBase64);
 
-            userService.saveUser(buildUserDTO);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            //userService.saveUser(buildUserDTO);
+            /*authService.signUp(buildUserDTO);*/
+            /*return new ResponseEntity<>(HttpStatus.CREATED);*/
+            return ResponseEntity.ok(authService.signUp(buildUserDTO));
 
         }catch (DataPersistExeption e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -60,12 +67,12 @@ public class AuthUserController {
         }
 
     }
-    /*@PostMapping("signin")
+    @PostMapping(value = "signin",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JWTAuthResponse> signIn(@RequestBody SignIn signIn){
-
+        return ResponseEntity.ok(authService.signIn(signIn));
     }
     @PostMapping("refresh")
-    public ResponseEntity<JWTAuthResponse> signIn(@RequestParam ("refreshToken") String refreshToken) {
-
-    }*/
+    public ResponseEntity<JWTAuthResponse> RefreshToken(@RequestParam ("existingToken") String existingToken) {
+        return ResponseEntity.ok(authService.refreshToken(existingToken));
+    }
 }
